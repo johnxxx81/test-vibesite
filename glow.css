@@ -1,0 +1,86 @@
+/* Свечение и волна на кнопках. Подключается после style.css. */
+
+.btn, .socials a {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Свечение: постоянное мягкое, на наведении и фокусе ярче */
+.btn {
+  box-shadow:
+    0 0 0 1px rgba(42,201,183,.4),
+    0 8px 26px rgba(42,201,183,.45),
+    0 0 54px rgba(42,201,183,.26);
+  transition: box-shadow .25s ease, transform .25s ease;
+}
+.btn:hover,
+.btn:focus-visible {
+  box-shadow:
+    0 0 0 1px rgba(150,255,238,.75),
+    0 10px 34px rgba(42,201,183,.7),
+    0 0 86px rgba(42,201,183,.5);
+  transform: translateY(-1px);
+}
+.btn:active { transform: translateY(1px); }
+
+.btn.ghost {
+  box-shadow: inset 0 0 0 1px var(--line), 0 0 22px rgba(42,201,183,.14);
+}
+.btn.ghost:hover,
+.btn.ghost:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--accent-hi), 0 0 36px rgba(42,201,183,.42);
+}
+
+.socials a { transition: box-shadow .25s ease, transform .25s ease; }
+.socials a:hover,
+.socials a:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--accent-hi), 0 0 30px rgba(42,201,183,.35);
+  transform: translateY(-1px);
+}
+
+/* Волна от нажатия: заливка и кольцо, добавляются скриптом glow.js.
+   z-index -1 внутри isolation: поверх фона кнопки, но под её текстом */
+.ripple {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, rgba(255,255,255,.7) 0%, rgba(255,255,255,.28) 42%, rgba(255,255,255,0) 70%);
+  animation: ripple-wave .75s ease-out forwards;
+}
+.ripple.ring {
+  background: none;
+  border: 2px solid rgba(255,255,255,.75);
+  animation-duration: .95s;
+  animation-delay: .08s;
+}
+@keyframes ripple-wave {
+  from { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  to   { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* Одно «дыхание» свечения: только у главной кнопки на первом экране */
+@media (prefers-reduced-motion: no-preference) {
+  .actions .btn:not(.ghost) { animation: glow-breath 3.2s ease-in-out infinite; }
+  .actions .btn:not(.ghost):hover,
+  .actions .btn:not(.ghost):focus-visible { animation: none; }
+  @keyframes glow-breath {
+    0%, 100% {
+      box-shadow: 0 0 0 1px rgba(42,201,183,.4), 0 8px 26px rgba(42,201,183,.4), 0 0 46px rgba(42,201,183,.2);
+    }
+    50% {
+      box-shadow: 0 0 0 1px rgba(110,240,222,.6), 0 10px 34px rgba(42,201,183,.62), 0 0 80px rgba(42,201,183,.42);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .socials a { transition: none; }
+  .ripple { display: none; }
+}
+
+@media (max-width: 760px) {
+  .btn { box-shadow: 0 0 0 1px rgba(42,201,183,.4), 0 6px 20px rgba(42,201,183,.42), 0 0 34px rgba(42,201,183,.22); }
+}
